@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser'
 import 'express-async-errors'
 
 import { AppError } from './error.js'
-import authRoutes from './auth/auth-routes.js'
+import routes from './routes.js'
 
 const app = express()
 
@@ -18,7 +18,8 @@ app.get('/', (req, res) => {
   })
 })
 
-app.use('/auth', authRoutes)
+// Main API routes
+app.use(routes)
 
 // Not Found route handler
 app.use((req, res) => {

@@ -1,33 +1,32 @@
-import { Router } from 'express'
+import { Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 import { AppError } from '../error.js'
 import { User } from '../user/user-model.js'
-import { authenticate } from './auth-middleware.js'
 
-const router = Router()
 const jwtSecret = process.env.JWT_SECRET || 'secret'
 
 /**
- * Register new User
- * @path POST /auth/register
+ * Register new user/admin
+ * @path POST /register
  */
-router.post('/register', async (req, res) => {
+export async function register(req: Request, res: Response) {
   // TODO: Validation
-  const { name, email, password } = req.body
+  const { name, email, password, role } = req.body
   const hash = await bcrypt.hash(password, 10)
   const user = await User.create({ name, email, password: hash })
   const token = jwt.sign({ id: user.id }, jwtSecret)
 
   res.status(201).cookie('token', token).json({ id: user.id, name, email })
-})
+}
 
 /**
- * Login User
- * @path POST /auth/login
+ * Login user/admin
+ * @path POST /login
  */
-router.post('/login', async (req, res) => {
+
+export async function login(req: Request, res: Response) {
   // TODO: Validation
   const { email, password } = req.body
   const user = await User.findOne({ email })
@@ -46,27 +45,12 @@ router.post('/login', async (req, res) => {
     .status(201)
     .cookie('token', token)
     .json({ id: user.id, name: user.name, email: user.email })
-})
+}
 
 /**
- * Logout User
- * @path POST /auth/logout
+ * Logout user/admin
+ * @path POST /logout
  */
-router.post('/login', async (req, res) => {
+export async function logout(req: Request, res: Response) {
   res.status(201).clearCookie('token').json({})
-})
-
-/**
- * Get User profile
- * @path GET /auth/profile
- */
-router.get('/profile', authenticate, async (req, res) => {
-  const user = await User.findById(res.locals.user.id)
-  if (!user) {
-    throw new AppError('User Not Found', 404)
-  }
-
-  res.status(201).json({ id: user.id, name: user.name, email: user.email })
-})
-
-export default router
+}
