@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import { AppError } from '../error.js'
 import { Assignment } from './assignment-model.js'
+import { uploadSchema } from './assignment-schema.js'
 
 /**
  * Upload an assignment
@@ -10,9 +11,7 @@ import { Assignment } from './assignment-model.js'
  */
 export async function uploadAssignment(req: Request, res: Response) {
   const userId = res.locals.user.id
-
-  // TODO: validate
-  const { task, admin } = req.body
+  const { task, admin } = uploadSchema.parse(req.body)
   const assignment = await Assignment.create({ task, admin, user: userId })
 
   res.status(200).json(assignment)
