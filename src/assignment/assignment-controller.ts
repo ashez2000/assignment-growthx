@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 
 import { AppError } from '../error.js'
+import { User } from '../user/user-model.js'
 import { Assignment } from './assignment-model.js'
 import { uploadSchema } from './assignment-schema.js'
 
@@ -12,6 +13,16 @@ import { uploadSchema } from './assignment-schema.js'
 export async function uploadAssignment(req: Request, res: Response) {
   const userId = res.locals.user.id
   const { task, admin } = uploadSchema.parse(req.body)
+
+  const isAdmin = await User.findById(admin)
+  if (!isAdmin) {
+    throw new AppError(`Admin ${admin} not found`, 404)
+  }
+
+  if (isAdmin.role != 'admin') {
+    throw new AppError(`Id ${admin} is not an admin user`, 400)
+  }
+
   const assignment = await Assignment.create({ task, admin, user: userId })
 
   res.status(200).json(assignment)
