@@ -4,6 +4,7 @@ import { AppError } from '../error.js'
 import { User } from '../user/user-model.js'
 import { Assignment } from './assignment-model.js'
 import { uploadSchema } from './assignment-schema.js'
+import { extractPagination } from '../util/paginate.js'
 
 /**
  * Upload an assignment
@@ -35,9 +36,15 @@ export async function uploadAssignment(req: Request, res: Response) {
  */
 export async function viewAssignments(req: Request, res: Response) {
   const adminId = res.locals.user.id
+
+  const { page, limit } = extractPagination(req)
+
   const assignments = await Assignment.find({
     admin: adminId,
   })
+    .skip((page - 1) * limit)
+    .limit(limit)
+
   res.status(200).json(assignments)
 }
 
