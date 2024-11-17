@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import http from 'node:http'
 import mongoose from 'mongoose'
 import app from './app.js'
