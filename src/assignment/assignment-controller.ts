@@ -55,22 +55,28 @@ export async function acceptAssignment(req: Request, res: Response) {
     throw new AppError('Assignment Not Found', 404)
   }
 
-  if (assignment.admin.id != adminId) {
+  // Admin check
+  if (assignment.admin.toString() != adminId) {
     throw new AppError(
       'Only admin assoicated with the assignment can accept the assignment',
       403
     )
   }
 
-  // TODO: Confirm the requirements for rejected assignments
+  // TODO:
+  // - Confirm the requirements for rejected assignments
+  // - Handle already accepted assignments
+  //
   // Cannot accept rejected assignments
   if (assignment.status == 'rejected') {
-    throw new AppError('Assignment already rejected', 400)
+    throw new AppError('Cannot accept rejected assignemt', 400)
   }
 
-  const update = await Assignment.findByIdAndUpdate(assignmentId, {
-    status: 'accepted',
-  })
+  const update = await Assignment.findByIdAndUpdate(
+    assignmentId,
+    { status: 'accepted' },
+    { new: true }
+  )
 
   res.status(200).json(update)
 }
@@ -89,22 +95,28 @@ export async function rejectAssignment(req: Request, res: Response) {
     throw new AppError('Assignment Not Found', 404)
   }
 
-  if (assignment.admin.id != adminId) {
+  // Admin check
+  if (assignment.admin.toString() != adminId) {
     throw new AppError(
       'Only admin assoicated with the assignment can reject the assignment',
       403
     )
   }
 
-  // TODO: Confirm the requirements for accepted assignments
+  // TODO:
+  // - Confirm the requirements for accepted assignments
+  // - Handle already rejected assignment
+  //
   // Cannot reject accepted assignments
   if (assignment.status == 'accepted') {
-    throw new AppError('Assignment already rejected', 400)
+    throw new AppError('Cannot reject accepted assignment', 400)
   }
 
-  const update = await Assignment.findByIdAndUpdate(assignmentId, {
-    status: 'rejected',
-  })
+  const update = await Assignment.findByIdAndUpdate(
+    assignmentId,
+    { status: 'rejected' },
+    { new: true }
+  )
 
   res.status(200).json(update)
 }
