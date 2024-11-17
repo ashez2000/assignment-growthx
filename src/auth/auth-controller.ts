@@ -30,7 +30,7 @@ export async function register(req: Request, res: Response) {
   res
     .status(201)
     .cookie('token', token)
-    .json({ id: newUser.id, name, email, role })
+    .json({ _id: newUser.id, name, email, role })
 }
 
 /**
@@ -58,7 +58,7 @@ export async function login(req: Request, res: Response) {
   res
     .status(200)
     .cookie('token', token)
-    .json({ id: user.id, name: user.name, email: user.email })
+    .json({ _id: user.id, name: user.name, email: user.email })
 }
 
 /**

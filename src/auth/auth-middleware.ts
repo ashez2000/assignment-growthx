@@ -25,7 +25,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 export function restrict(...roles: ('user' | 'admin')[]) {
   return function (req: Request, res: Response, next: NextFunction) {
     if (!roles.includes(res.locals.user.role)) {
-      throw new AppError(`Only ${roles.toString()} are allowed`, 403)
+      throw new AppError(
+        `Only ${roles.toString()} are allowed to access this route`,
+        403
+      )
     }
 
     next()

@@ -24,7 +24,7 @@ app.use(routes)
 
 // Not Found route handler
 app.use((req, res) => {
-  res.status(400).json({ message: 'Not Found' })
+  res.status(400).json({ message: 'Route Not Found' })
 })
 
 // Global error handler
